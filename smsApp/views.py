@@ -2,13 +2,12 @@ import datetime
 from django.shortcuts import redirect, render
 import json
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.http import HttpResponse
 from smsApp import models, forms
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-
+from users.models import CustomUser  # Adjust the app name and model name if necessary
 
 
 def context_data(request):
@@ -58,7 +57,7 @@ def save_register(request):
 def update_profile(request):
     context = context_data(request)
     context['page_title'] = 'Update Profile'
-    user = User.objects.get(id = request.user.id)
+    user = CustomUser.objects.get(id = request.user.id)
     if not request.method == 'POST':
         form = forms.UpdateProfile(instance=user)
         context['form'] = form
@@ -130,7 +129,7 @@ def home(request):
     context['groups'] = models.Groups.objects.filter(delete_flag = 0, status = 1).all().count()
     context['active_members'] = models.Members.objects.filter(delete_flag = 0, status = 1).all().count()
     context['inactive_members'] = models.Members.objects.filter(delete_flag = 0, status = 0).all().count()
-    context['users'] = User.objects.filter(is_superuser = False).all().count()
+    context['users'] = CustomUser.objects.filter(is_superuser = False).all().count()
     return render(request, 'home.html', context)
 
 def logout_user(request):
@@ -150,7 +149,7 @@ def users(request):
     context = context_data(request)
     context['page'] = 'users'
     context['page_title'] = "User List"
-    context['users'] = User.objects.exclude(pk=request.user.pk).filter(is_superuser = False).all()
+    context['users'] = CustomUser.objects.exclude(pk=request.user.pk).filter(is_superuser = False).all()
     return render(request, 'users.html', context)
 
 @login_required
@@ -159,7 +158,7 @@ def save_user(request):
     if request.method == 'POST':
         post = request.POST
         if not post['id'] == '':
-            user = User.objects.get(id = post['id'])
+            user = CustomUser.objects.get(id = post['id'])
             form = forms.UpdateUser(request.POST, instance=user)
         else:
             form = forms.SaveUser(request.POST) 
@@ -190,7 +189,7 @@ def manage_user(request, pk = None):
     if pk is None:
         context['user'] = {}
     else:
-        context['user'] = User.objects.get(id=pk)
+        context['user'] = CustomUser.objects.get(id=pk)
     
     return render(request, 'manage_user.html', context)
 
@@ -379,3 +378,5 @@ def per_group(request):
             print(err)
     return render(request, 'per_group.html', context)
 
+def my_view(request):
+    user = CustomUser.objects.get(pk=1)

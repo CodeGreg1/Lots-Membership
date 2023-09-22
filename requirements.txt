@@ -1,2 +1,6 @@
 Django==4.0.3
 Pillow
+asgiref==3.7.2
+django-cors-headers==4.2.0
+numpy==1.26.0
+sqlparse==0.4.4

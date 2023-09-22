@@ -6,9 +6,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from PIL import Image
-from django.contrib.auth.models import User
 from django.contrib.auth.base_user import BaseUserManager
 
+from users.models import CustomUser  # Adjust the app name and model name if necessary
 
 
 # Create your models here.
@@ -33,7 +33,7 @@ class Members(models.Model):
     middle_name = models.CharField(max_length=250, blank=True, null=True)
     last_name = models.CharField(max_length=250)
     gender = models.CharField(max_length=20, choices=(('Male','Male'), ('Female','Female')), default = "Male")
-    contact = models.CharField(max_length=250)
+    contact = models.CharField(max_length=250, null=True)
     email = models.CharField(max_length=250)
     address = models.TextField(blank=True, null= True)
     image_path = models.ImageField(upload_to="members/")

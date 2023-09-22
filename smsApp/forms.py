@@ -7,8 +7,10 @@ from numpy import require
 from smsApp import models
 
 from django.contrib.auth.forms import UserCreationForm,PasswordChangeForm, UserChangeForm
-from django.contrib.auth.models import User
 import datetime
+
+from users.models import CustomUser  # Adjust the app name and model name if necessary
+
 
 class SaveUser(UserCreationForm):
     username = forms.CharField(max_length=250,help_text="The Username field is required.")
@@ -19,7 +21,7 @@ class SaveUser(UserCreationForm):
     password2 = forms.CharField(max_length=250)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ('email', 'username','first_name', 'last_name','password1', 'password2',)
 
 class UpdateProfile(UserChangeForm):
@@ -30,7 +32,7 @@ class UpdateProfile(UserChangeForm):
     current_password = forms.CharField(max_length=250)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ('email', 'username','first_name', 'last_name')
 
     def clean_current_password(self):
@@ -40,7 +42,7 @@ class UpdateProfile(UserChangeForm):
     def clean_email(self):
         email = self.cleaned_data['email']
         try:
-            user = User.objects.exclude(id=self.cleaned_data['id']).get(email = email)
+            user = CustomUser.objects.exclude(id=self.cleaned_data['id']).get(email = email)
         except Exception as e:
             return email
         raise forms.ValidationError(f"The {user.email} mail is already exists/taken")
@@ -48,7 +50,7 @@ class UpdateProfile(UserChangeForm):
     def clean_username(self):
         username = self.cleaned_data['username']
         try:
-            user = User.objects.exclude(id=self.cleaned_data['id']).get(username = username)
+            user = CustomUser.objects.exclude(id=self.cleaned_data['id']).get(username = username)
         except Exception as e:
             return username
         raise forms.ValidationError(f"The {user.username} mail is already exists/taken")
@@ -60,13 +62,13 @@ class UpdateUser(UserChangeForm):
     last_name = forms.CharField(max_length=250,help_text="The Last Name field is required.")
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ('email', 'username','first_name', 'last_name')
 
     def clean_email(self):
         email = self.cleaned_data['email']
         try:
-            user = User.objects.exclude(id=self.cleaned_data['id']).get(email = email)
+            user = CustomUser.objects.exclude(id=self.cleaned_data['id']).get(email = email)
         except Exception as e:
             return email
         raise forms.ValidationError(f"The {user.email} mail is already exists/taken")
@@ -74,7 +76,7 @@ class UpdateUser(UserChangeForm):
     def clean_username(self):
         username = self.cleaned_data['username']
         try:
-            user = User.objects.exclude(id=self.cleaned_data['id']).get(username = username)
+            user = CustomUser.objects.exclude(id=self.cleaned_data['id']).get(username = username)
         except Exception as e:
             return username
         raise forms.ValidationError(f"The {user.username} mail is already exists/taken")
@@ -84,7 +86,7 @@ class UpdatePasswords(PasswordChangeForm):
     new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control form-control-sm rounded-0'}), label="New Password")
     new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control form-control-sm rounded-0'}), label="Confirm New Password")
     class Meta:
-        model = User
+        model = CustomUser
         fields = ('old_password','new_password1', 'new_password2')
 
 class SaveGroup(forms.ModelForm):
